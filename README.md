@@ -16,15 +16,15 @@ Android
 
 🔍 Smart search and filters for finding the perfect match
 
-📝 Submit and track adoption applications
+📝 Submit adoption applications in-app
 
-💬 Direct messaging with shelters or rescuers
+💬 View detailed pet profiles with photos
 
 ❤️ Save favorite pets for later
 
-🏢 Manage shelter/rescuer accounts and pet listings
 
 🎯 Goal
+
 To promote responsible pet adoption and help reduce the number of homeless animals by making the adoption process easier and more transparent.
 
 🛠 Tech Stack
