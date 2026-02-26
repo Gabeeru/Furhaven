@@ -2,13 +2,11 @@
 
 Furhaven is an iOS and Android mobile application that connects loving adopters with pets in need of a forever home. The platform makes pet adoption simple, secure, and accessible by linking users with shelters and rescuers in one centralized system.
 
-
 📱 Platforms
 
 iOS
 
 Android
-
 
 🌟 Features
 
@@ -22,7 +20,6 @@ Android
 
 ❤️ Save favorite pets for later
 
-
 🎯 Goal
 
 To promote responsible pet adoption and help reduce the number of homeless animals by making the adoption process easier and more transparent.
@@ -31,8 +28,6 @@ To promote responsible pet adoption and help reduce the number of homeless anima
 
 Mobile Development: React Native
 
-
 Backend & Database: TBD
-
 
 Furhaven – Helping Pets Find Loving Homes. ❤️

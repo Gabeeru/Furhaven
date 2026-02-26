@@ -1,20 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image, Button } from "react-native";
 import React from "react";
+import { Link } from "expo-router";
+import styles from "../styles/globalStyle";
+import logo from "../assets/index/logo.png";
 
-const index = () => {
+const Index = () => {
   return (
     <View style={styles.headerOne}>
-      <Text>hi my nigga</Text>
+      <Image source={logo} style={styles.logo} />
+      <Text style={styles.headerText}>Where Pets Find Forever Homes</Text>
+      <Link href="/welcome">Proceed </Link>
     </View>
   );
 };
 
-export default index;
-
-const styles = StyleSheet.create({
-  headerOne: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
+export default Index;
