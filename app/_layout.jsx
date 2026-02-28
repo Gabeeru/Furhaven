@@ -1,7 +1,13 @@
-import { StyleSheet, View, ActivityIndicator } from "react-native";
-import { Stack } from "expo-router";
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  Text,
+  Pressable,
+} from "react-native";
+import { Stack, useRouter } from "expo-router";
 import { useFonts } from "expo-font";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 import { useMemo } from "react";
 
 const COLORS = {
@@ -10,6 +16,8 @@ const COLORS = {
 };
 
 const Layout = () => {
+  const router = useRouter();
+
   const [fontsLoaded] = useFonts({
     Gabriola: require("../assets/fonts/gabriola.ttf"),
     ConcertOne: require("../assets/fonts/concert-one.ttf"),
@@ -28,12 +36,25 @@ const Layout = () => {
       contentStyle: {
         backgroundColor: COLORS.background,
       },
+
+      headerRight: () => (
+        <Pressable
+          onPress={() => router.push("/menu")}
+          style={{ marginRight: 10 }}
+        >
+          <Ionicons name="menu" size={26} color={COLORS.primary} />
+        </Pressable>
+      ),
     }),
-    [],
+    [router],
   );
 
   if (!fontsLoaded) {
-    return null;
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
   }
 
   return (
@@ -41,6 +62,20 @@ const Layout = () => {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="welcome" options={{ headerShown: false }} />
       <Stack.Screen name="about" options={{ title: "About" }} />
+      <Stack.Screen
+        name="menu"
+        options={{
+          title: "Menu",
+          headerRight: () => (
+            <Pressable
+              onPress={() => router.push("/dashboard")}
+              style={{ marginRight: 10 }}
+            >
+              <Ionicons name="home-outline" size={26} color={COLORS.primary} />
+            </Pressable>
+          ),
+        }}
+      />
       <Stack.Screen name="dashboard" options={{ title: "Furhaven" }} />
     </Stack>
   );
@@ -49,10 +84,6 @@ const Layout = () => {
 export default Layout;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
   loader: {
     flex: 1,
     justifyContent: "center",

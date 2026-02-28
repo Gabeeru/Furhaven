@@ -1,6 +1,7 @@
 import {
   StyleSheet,
   View,
+  ScrollView,
   TextInput,
   TouchableOpacity,
   TouchableHighlight,
@@ -33,9 +34,10 @@ const Dashboard = () => {
     {
       id: "1",
       title: "Dog",
-      color: "#A67B5B",
+      color: "#FFFFFF",
       icon: require("../assets/dashboard/dog.png"),
     },
+
     {
       id: "2",
       title: "Cat",
@@ -60,6 +62,7 @@ const Dashboard = () => {
       location: "Bonifacio St., Cebu City, Philippines",
       image: require("../assets/dashboard/pet1.png"),
     },
+
     {
       id: "2",
       name: "Dwarde",
@@ -78,14 +81,41 @@ const Dashboard = () => {
       location: "Day-as, Cebu City, Philippines",
       image: require("../assets/dashboard/pet3.png"),
     },
+    {
+      id: "4",
+      name: "Kentoy",
+      type: "Bird",
+      breed: "Blue-and-yellow Macaw Parrot",
+      age: "3 years",
+      location: "Day-as, Cebu City, Philippines",
+      image: require("../assets/dashboard/pet3.png"),
+    },
+    {
+      id: "5",
+      name: "Kentoy",
+      type: "Bird",
+      breed: "Blue-and-yellow Macaw Parrot",
+      age: "3 years",
+      location: "Day-as, Cebu City, Philippines",
+      image: require("../assets/dashboard/pet3.png"),
+    },
+    {
+      id: "6",
+      name: "Kentoy",
+      type: "Bird",
+      breed: "Blue-and-yellow Macaw Parrot",
+      age: "3 years",
+      location: "Day-as, Cebu City, Philippines",
+      image: require("../assets/dashboard/pet3.png"),
+    },
   ];
 
   const menu = [
     { id: "1", name: "Home", icon: "home" },
     { id: "2", name: "My Pets", icon: "paw" },
-    { id: "3", name: "Search", icon: "search" },
-    { id: "4", name: "Add Pet", icon: "add-circle" },
-    { id: "5", name: "Profile", icon: "person" },
+    { id: "3", name: "Add Pet", icon: "add-circle" },
+    { id: "4", name: "Profile", icon: "person" },
+    { id: "5", name: "Settings", icon: "settings" },
   ];
 
   return (
@@ -110,7 +140,7 @@ const Dashboard = () => {
       {/* Categories */}
       <View>
         <Text style={styles.label}>Categories</Text>
-        <View style={styles.row}>
+        <View style={styles.rowcateg}>
           {data.map((item) => (
             <View style={styles.itemContainer} key={item.id}>
               <TouchableOpacity
@@ -130,11 +160,12 @@ const Dashboard = () => {
       </View>
 
       {/* Explore */}
-      <View style={styles.exploreSection}>
+      <ScrollView style={styles.exploreSection}>
         <Text style={styles.label}>Explore</Text>
         {petData.map((pet) => (
           <TouchableOpacity
             activeOpacity={0.9}
+            onPress={() => console.log("Viewing details for:", pet.name)}
             key={pet.id}
             style={styles.petCard}
           >
@@ -161,7 +192,7 @@ const Dashboard = () => {
             </View>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
       {/* end */}
 
       <View style={styles.menucont}>
