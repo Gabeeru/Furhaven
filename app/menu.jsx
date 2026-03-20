@@ -5,6 +5,7 @@ import profile from "../assets/menu/default_profile.png";
 import styles from "../styles/globalStyle";
 import { Ionicons } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
+import { useRouter } from "expo-router";
 
 const COLORS = {
   background: "#FBF0DD",
@@ -19,16 +20,23 @@ const menubuttons = [
   { id: "3", name: "Add Pet", icon: "add-circle" },
   { id: "4", name: "Profile", icon: "person" },
   { id: "5", name: "Settings", icon: "settings" },
+  { id: "6", name: "About", icon: "help-circle" },
+  { id: "7", name: "Log-out", icon: "log-out" },
 ];
-
-const handleMenuPress = (menuItem) => {
-  console.log(`Navigating to ${menuItem.name}`);
-};
 
 const name = "Guest User";
 const status = "Active Status";
 
 const menu = () => {
+  const router = useRouter();
+
+  const handleMenuPress = (menuItem) => {
+    console.log(`Navigating to ${menuItem.name}`);
+    if (menuItem.name === "About") {
+      // navigation logic to about page
+      router.push("/about");
+    }
+  };
   return (
     <View>
       <ImageBackground

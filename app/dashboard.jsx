@@ -11,6 +11,7 @@ import {
 import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "../styles/globalStyle";
+import Bottom_menu from "../components/bottom_menu.jsx";
 
 const Dashboard = () => {
   const [text, setText] = useState("");
@@ -23,11 +24,6 @@ const Dashboard = () => {
   const handleFilter = (category) => {
     console.log("Filtering by:", category);
     // filter logic
-  };
-
-  const handleMenuPress = (menuItem) => {
-    console.log("Navigating to:", menuItem);
-    // navigation logic
   };
 
   const data = [
@@ -83,7 +79,7 @@ const Dashboard = () => {
     },
     {
       id: "4",
-      name: "Kentoy",
+      name: "Yotnek",
       type: "Bird",
       breed: "Blue-and-yellow Macaw Parrot",
       age: "3 years",
@@ -92,7 +88,7 @@ const Dashboard = () => {
     },
     {
       id: "5",
-      name: "Kentoy",
+      name: "KentDward",
       type: "Bird",
       breed: "Blue-and-yellow Macaw Parrot",
       age: "3 years",
@@ -101,21 +97,13 @@ const Dashboard = () => {
     },
     {
       id: "6",
-      name: "Kentoy",
+      name: "Selle Buno",
       type: "Bird",
       breed: "Blue-and-yellow Macaw Parrot",
       age: "3 years",
       location: "Day-as, Cebu City, Philippines",
       image: require("../assets/dashboard/pet3.png"),
     },
-  ];
-
-  const menu = [
-    { id: "1", name: "Home", icon: "home" },
-    { id: "2", name: "My Pets", icon: "paw" },
-    { id: "3", name: "Add Pet", icon: "add-circle" },
-    { id: "4", name: "Profile", icon: "person" },
-    { id: "5", name: "Settings", icon: "settings" },
   ];
 
   return (
@@ -160,8 +148,8 @@ const Dashboard = () => {
       </View>
 
       {/* Explore */}
-      <ScrollView style={styles.exploreSection}>
-        <Text style={styles.label}>Explore</Text>
+      <Text style={styles.label}>Explore</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {petData.map((pet) => (
           <TouchableOpacity
             activeOpacity={0.9}
@@ -169,17 +157,17 @@ const Dashboard = () => {
             key={pet.id}
             style={styles.petCard}
           >
-            {/* The Colored Background Square */}
+            {/* Colored Background Square */}
             <View style={styles.imageBackground} />
 
-            {/* The Pet Image (Positioned Absolute) */}
+            {/* Pet Image  */}
             <Image
               source={pet.image}
               style={styles.petImage}
               resizeMode="contain"
             />
 
-            {/* The White Info Box */}
+            {/* White Info Box */}
             <View style={styles.petInfo}>
               <Text style={styles.petName}>{pet.name}</Text>
               <Text style={styles.petBreed}>{pet.breed}</Text>
@@ -195,21 +183,7 @@ const Dashboard = () => {
       </ScrollView>
       {/* end */}
 
-      <View style={styles.menucont}>
-        <View style={styles.navBar}>
-          {menu.map((item) => (
-            <TouchableHighlight
-              key={item.id}
-              style={styles.menuButton}
-              onPress={() => handleMenuPress(item.name)}
-              underlayColor="#D9C2A3" // Lightens slightly when pressed
-              activeOpacity={0.8}
-            >
-              <Ionicons name={item.icon} size={24} color="#5D3A29" />
-            </TouchableHighlight>
-          ))}
-        </View>
-      </View>
+      <Bottom_menu />
     </View>
   );
 };

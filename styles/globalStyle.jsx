@@ -283,4 +283,12 @@ export default StyleSheet.create({
     fontWeight: "bold",
     fontSize: 20,
   },
+
+  // ABOUT
+
+  aboutText: {
+    textAlign: "center",
+    marginTop: 20,
+    margin: 20,
+  },
 });
