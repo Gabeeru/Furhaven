@@ -293,31 +293,55 @@ export default StyleSheet.create({
   },
 
   // LOGIN
+  innerContainer: {
+    flex: 1,
+    alignItems: "center",
+    paddingTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+
+  loginlogo: {
+    width: 200,
+    height: 200,
+    resizeMode: "contain",
+    marginTop: 20,
+    marginBottom: -10, // Pull text slightly closer to the logo's bottom edge
+  },
+
+  outerContainer: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    // Add some padding to frame the content like a phone screen
+    paddingTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
 
   loginText: {
     fontSize: 42,
     fontFamily: "ConcertOne",
     textAlign: "center",
-    margin: 20,
+    color: COLORS.primary,
+    marginBottom: 30, // Create space before the form
   },
-
-  loginContainer: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-    // justifyContent: "center",
+  formContainer: {
+    width: "100%",
+    maxWidth: 320, // Optional: restrict form width on larger screens
     alignItems: "center",
-    flexDirection: "row",
   },
-
+  inputGroup: {
+    width: "100%",
+    marginBottom: 20, // Space between email and password fields
+  },
   textInputs: {
-    width: "80%",
+    width: "100%", // Use full width of the inputGroup container
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     fontSize: 16,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
-    marginTop: 10,
   },
 });
