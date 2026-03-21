@@ -291,4 +291,33 @@ export default StyleSheet.create({
     marginTop: 20,
     margin: 20,
   },
+
+  // LOGIN
+
+  loginText: {
+    fontSize: 42,
+    fontFamily: "ConcertOne",
+    textAlign: "center",
+    margin: 20,
+  },
+
+  loginContainer: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    // justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+
+  textInputs: {
+    width: "80%",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    marginTop: 10,
+  },
 });

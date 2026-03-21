@@ -52,6 +52,9 @@ const menu = () => {
             <View style={styles.profiletext}>
               <Text style={[styles.bold, { fontSize: 20 }]}>{name}</Text>
               <Text>{status}</Text>
+              <TouchableOpacity onPress={() => router.push("/login")}>
+                <Text style={{ margin: 5 }}>Log in</Text>
+              </TouchableOpacity>
             </View>
           </View>
           {/* end of profile */}
