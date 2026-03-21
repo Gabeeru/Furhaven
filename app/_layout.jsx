@@ -40,7 +40,7 @@ const Layout = () => {
       headerRight: () => (
         <Pressable
           onPress={() => router.push("/menu")}
-          style={{ marginRight: 10 }}
+          
         >
           <Ionicons name="menu" size={26} color={COLORS.primary} />
         </Pressable>
