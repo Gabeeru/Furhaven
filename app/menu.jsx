@@ -36,6 +36,9 @@ const menu = () => {
       // navigation logic to about page
       router.push("/about");
     }
+    if (menuItem.name === "Home") {
+      router.push("/dashboard");
+    }
   };
   return (
     <View>

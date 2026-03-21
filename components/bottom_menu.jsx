@@ -2,11 +2,8 @@ import { View, Text, TouchableHighlight } from "react-native";
 import React from "react";
 import styles from "../styles/globalStyle";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
-const handleMenuPress = (menuItem) => {
-  console.log("Navigating to:", menuItem);
-  // navigation logic
-};
 const menu = [
   { id: "1", name: "Home", icon: "home" },
   { id: "2", name: "My Pets", icon: "paw" },
@@ -15,6 +12,16 @@ const menu = [
 ];
 
 const bottom_menu = () => {
+  const router = useRouter();
+
+  const handleMenuPress = (menuItem) => {
+    console.log("Navigating to:", menuItem);
+    // navigation logic
+    if (menuItem === "Home") {
+      router.push("/dashboard");
+    }
+  };
+
   return (
     <View style={styles.menucont}>
       <View style={styles.navBar}>

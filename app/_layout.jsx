@@ -25,6 +25,7 @@ const Layout = () => {
 
   const screenOptions = useMemo(
     () => ({
+      animation: "none",
       headerTitleAlign: "center",
       headerStyle: {
         backgroundColor: COLORS.background,
@@ -38,10 +39,7 @@ const Layout = () => {
       },
 
       headerRight: () => (
-        <Pressable
-          onPress={() => router.push("/menu")}
-          
-        >
+        <Pressable onPress={() => router.push("/menu")}>
           <Ionicons name="menu" size={26} color={COLORS.primary} />
         </Pressable>
       ),
@@ -61,6 +59,7 @@ const Layout = () => {
     <Stack screenOptions={screenOptions}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="welcome" options={{ headerShown: false }} />
+      <Stack.Screen name="login" options={{ title: "Furhaven" }} />
       <Stack.Screen name="about" options={{ title: "About" }} />
       <Stack.Screen
         name="menu"
