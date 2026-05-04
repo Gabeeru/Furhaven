@@ -4,27 +4,19 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  TouchableHighlight,
   Text,
   Image,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "../styles/globalStyle";
 import Bottom_menu from "../components/bottom_menu.jsx";
+import PetCard from "../components/PetCard.jsx";
 
 const Dashboard = () => {
   const [text, setText] = useState("");
-
-  const handleSearch = () => {
-    console.log("Searching for:", text);
-    // filter/search logic
-  };
-
-  const handleFilter = (category) => {
-    console.log("Filtering by:", category);
-    // filter logic
-  };
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [filteredPets, setFilteredPets] = useState([]);
 
   const data = [
     {
@@ -33,7 +25,6 @@ const Dashboard = () => {
       color: "#FFFFFF",
       icon: require("../assets/dashboard/dog.png"),
     },
-
     {
       id: "2",
       title: "Cat",
@@ -52,63 +43,98 @@ const Dashboard = () => {
     {
       id: "1",
       name: "Gabby",
+      gender: "male",
       type: "Cat",
       breed: "Persian Cat",
-      age: "2 years",
+      age: "2",
       location: "Bonifacio St., Cebu City, Philippines",
-      image: require("../assets/dashboard/pet1.png"),
     },
-
     {
       id: "2",
       name: "Dwarde",
+      gender: "male",
       type: "Dog",
       breed: "Husky Dog",
-      age: "1 year",
+      age: "1",
       location: "Basak, Pardo, Cebu, Philippines",
-      image: require("../assets/dashboard/pet2.png"),
     },
     {
       id: "3",
       name: "Kentoy",
+      gender: "male",
       type: "Bird",
       breed: "Blue-and-yellow Macaw Parrot",
-      age: "3 years",
+      age: "3",
       location: "Day-as, Cebu City, Philippines",
-      image: require("../assets/dashboard/pet3.png"),
     },
     {
       id: "4",
       name: "Yotnek",
+      gender: "male",
       type: "Bird",
       breed: "Blue-and-yellow Macaw Parrot",
-      age: "3 years",
+      age: "3",
       location: "Day-as, Cebu City, Philippines",
-      image: require("../assets/dashboard/pet3.png"),
     },
     {
       id: "5",
       name: "KentDward",
+      gender: "male",
       type: "Bird",
       breed: "Blue-and-yellow Macaw Parrot",
-      age: "3 years",
+      age: "3",
       location: "Day-as, Cebu City, Philippines",
-      image: require("../assets/dashboard/pet3.png"),
     },
     {
       id: "6",
       name: "Selle Buno",
+      gender: "female",
       type: "Bird",
       breed: "Blue-and-yellow Macaw Parrot",
-      age: "3 years",
+      age: "3",
       location: "Day-as, Cebu City, Philippines",
-      image: require("../assets/dashboard/pet3.png"),
     },
   ];
 
+  //  Combined search + filter logic
+  useEffect(() => {
+    let filtered = petData;
+
+    const query = text.trim().toLowerCase();
+
+    // Apply search
+    if (query.length > 0) {
+      filtered = filtered.filter((pet) => {
+        return (
+          pet.name.toLowerCase().includes(query) ||
+          pet.type.toLowerCase().includes(query) ||
+          pet.gender.toLowerCase().includes(query)
+        );
+      });
+    }
+
+    // Apply category filter
+    if (selectedCategory) {
+      filtered = filtered.filter(
+        (pet) => pet.type.toLowerCase() === selectedCategory.toLowerCase(),
+      );
+    }
+
+    setFilteredPets(filtered);
+  }, [text, selectedCategory]);
+
+  const handleFilter = (category) => {
+    // toggle filter
+    if (selectedCategory === category) {
+      setSelectedCategory(null);
+    } else {
+      setSelectedCategory(category);
+    }
+  };
+
   return (
     <View style={styles.containerdashbrd}>
-      {/* // Search Bar */}
+      {/* Search Bar */}
       <View style={styles.containersearch}>
         <View style={styles.searchBar}>
           <TextInput
@@ -116,11 +142,10 @@ const Dashboard = () => {
             placeholder="Search pets..."
             value={text}
             onChangeText={setText}
-            returnKeyType="search"
-            onSubmitEditing={handleSearch}
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleSearch}>
+
+        <TouchableOpacity style={styles.button}>
           <Ionicons name="search" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -132,7 +157,13 @@ const Dashboard = () => {
           {data.map((item) => (
             <View style={styles.itemContainer} key={item.id}>
               <TouchableOpacity
-                style={[styles.card, { backgroundColor: item.color }]}
+                style={[
+                  styles.card,
+                  {
+                    backgroundColor:
+                      selectedCategory === item.title ? "#ddd" : item.color,
+                  },
+                ]}
                 onPress={() => handleFilter(item.title)}
               >
                 <Image
@@ -149,39 +180,24 @@ const Dashboard = () => {
 
       {/* Explore */}
       <Text style={styles.label}>Explore</Text>
+
       <ScrollView showsVerticalScrollIndicator={false}>
-        {petData.map((pet) => (
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => console.log("Viewing details for:", pet.name)}
-            key={pet.id}
-            style={styles.petCard}
-          >
-            {/* Colored Background Square */}
-            <View style={styles.imageBackground} />
-
-            {/* Pet Image  */}
-            <Image
-              source={pet.image}
-              style={styles.petImage}
-              resizeMode="contain"
+        {filteredPets.length > 0 ? (
+          filteredPets.map((pet) => (
+            <PetCard
+              key={pet.id}
+              pet={pet}
+              onPress={(selectedPet) =>
+                console.log("Viewing details for:", selectedPet.name)
+              }
             />
-
-            {/* White Info Box */}
-            <View style={styles.petInfo}>
-              <Text style={styles.petName}>{pet.name}</Text>
-              <Text style={styles.petBreed}>{pet.breed}</Text>
-              <Text style={styles.petAge}>{pet.age} years old</Text>
-
-              <View style={styles.locationRow}>
-                <Ionicons name="location" size={14} color="#7B3F21" />
-                <Text style={styles.petLocation}>{pet.location}</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+          ))
+        ) : (
+          <Text style={{ textAlign: "center", marginTop: 20 }}>
+            No pets found
+          </Text>
+        )}
       </ScrollView>
-      {/* end */}
 
       <Bottom_menu />
     </View>

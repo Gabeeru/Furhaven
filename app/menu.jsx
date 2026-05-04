@@ -15,10 +15,10 @@ const COLORS = {
 <ImageBackground source={catbg} style={styles.catbg}></ImageBackground>;
 
 const menubuttons = [
-  { id: "1", name: "Home", icon: "home" },
-  { id: "2", name: "Explore", icon: "paw" },
-  { id: "3", name: "Add Pet", icon: "add-circle" },
-  { id: "4", name: "Profile", icon: "person" },
+  { id: "1", name: "Profile", icon: "person" },
+  { id: "2", name: "Home", icon: "home" },
+  { id: "3", name: "Explore", icon: "paw" },
+  { id: "4", name: "Add Pet", icon: "add-circle" },
   { id: "5", name: "Settings", icon: "settings" },
   { id: "6", name: "About", icon: "help-circle" },
   { id: "7", name: "Log-out", icon: "log-out" },
@@ -38,6 +38,20 @@ const menu = () => {
     }
     if (menuItem.name === "Home") {
       router.push("/dashboard");
+    }
+    if (menuItem.name === "Log-out") {
+      router.push("/login");
+    }
+
+    // TESTSTS PLEASE REMOVE LATER
+    // if (menuItem.name === "Profile") {
+    //   router.push("/addprofile");
+    // }
+    if (menuItem.name === "Profile") {
+      router.push("/petprofile");
+    }
+    if (menuItem.name === "Settings") {
+      router.push("/ownerprofile");
     }
   };
   return (
