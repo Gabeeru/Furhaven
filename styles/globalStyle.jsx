@@ -83,6 +83,7 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: "#FBF0DD",
     padding: 15,
+    paddingBottom: 120,
   },
   containersearch: {
     backgroundColor: COLORS.background,
@@ -155,9 +156,10 @@ export default StyleSheet.create({
   petCard: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 25,
-    height: 120,
+    // marginBottom: 25,
+    height: 125,
     marginHorizontal: 10,
+    marginTop: 25,
   },
   imageBackground: {
     width: 100,

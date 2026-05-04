@@ -7,8 +7,9 @@ import { useRouter } from "expo-router";
 const menu = [
   { id: "1", name: "Home", icon: "home" },
   { id: "2", name: "My Pets", icon: "paw" },
-  { id: "3", name: "Add Pet", icon: "add-circle" },
+  { id: "3", name: "Add-Pet", icon: "add-circle" },
   { id: "4", name: "Profile", icon: "person" },
+  { id: "5", name: "Settings", icon: "settings" },
 ];
 
 const bottom_menu = () => {
@@ -19,6 +20,9 @@ const bottom_menu = () => {
     // navigation logic
     if (menuItem === "Home") {
       router.push("/dashboard");
+    }
+    if (menuItem === "Add-Pet") {
+      router.push("/mypet");
     }
   };
 

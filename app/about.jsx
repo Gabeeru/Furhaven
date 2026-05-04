@@ -105,7 +105,7 @@ const localStyles = StyleSheet.create({
     margin: 20,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: 50,
   },
   sectionTitle: {
     fontWeight: "bold",

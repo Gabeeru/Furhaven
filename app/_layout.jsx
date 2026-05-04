@@ -25,7 +25,6 @@ const Layout = () => {
 
   const screenOptions = useMemo(
     () => ({
-      animation: "none",
       headerTitleAlign: "center",
       headerStyle: {
         backgroundColor: COLORS.background,
@@ -57,10 +56,38 @@ const Layout = () => {
 
   return (
     <Stack screenOptions={screenOptions}>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="welcome" options={{ headerShown: false }} />
-      <Stack.Screen name="login" options={{ title: "Furhaven" }} />
-      <Stack.Screen name="about" options={{ title: "About" }} />
+      <Stack.Screen
+        name="index"
+        options={{ headerShown: false, animation: "none" }}
+      />
+      <Stack.Screen
+        name="welcome"
+        options={{ headerShown: false, animation: "none" }}
+      />
+      <Stack.Screen
+        name="login"
+        options={{ title: "Furhaven", animation: "none" }}
+      />
+      <Stack.Screen
+        name="about"
+        options={{ title: "About", animation: "none" }}
+      />
+      <Stack.Screen
+        name="mypet"
+        options={{ title: "Furhaven", animation: "none" }}
+      />
+      <Stack.Screen
+        name="petprofile"
+        options={{ title: "Furhaven", animation: "none" }}
+      />
+      <Stack.Screen
+        name="ownerprofile"
+        options={{ title: "Furhaven", animation: "none" }}
+      />
+      <Stack.Screen
+        name="addpet"
+        options={{ title: "Furhaven", animation: "none" }}
+      />
       <Stack.Screen
         name="menu"
         options={{
