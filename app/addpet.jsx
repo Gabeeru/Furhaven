@@ -7,11 +7,46 @@ import {
   ScrollView,
   StyleSheet,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { db } from "../lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function AddPetScreen() {
   const [gender, setGender] = useState("Female");
+  const [petName, setPetName] = useState("");
+  const [breed, setBreed] = useState("");
+  const [type, setType] = useState("");
+  const [age, setAge] = useState("");
+  const [about, setAbout] = useState("");
+  const [address, setAddress] = useState("");
+
+  const addPet = async () => {
+    try {
+      await addDoc(collection(db, "pets"), {
+        name: petName,
+        breed: breed,
+        type: type,
+        gender: gender,
+        age: age,
+        about: about,
+        address: address,
+        status: "Available",
+        createdAt: serverTimestamp(),
+        adoptedBy: null,
+      });
+      Alert.alert("Success", "Pet added successfully!");
+      setPetName("");
+      setBreed("");
+      setType("");
+      setAge("");
+      setAbout("");
+      setAddress("");
+    } catch (error) {
+      console.error("Error adding pet: ", error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,7 +59,7 @@ export default function AddPetScreen() {
               Fill in the details below to help your pet find a loving home.
             </Text>
           </View>
-          <TouchableOpacity style={styles.saveBtn}>
+          <TouchableOpacity style={styles.saveBtn} onPress={addPet}>
             <Ionicons name="download-outline" size={18} color="black" />
             <Text style={styles.saveText}>SAVE</Text>
           </TouchableOpacity>
@@ -39,6 +74,8 @@ export default function AddPetScreen() {
             style={styles.input}
             placeholder="Enter name"
             placeholderTextColor="#A0A0A0"
+            value={petName}
+            onChangeText={setPetName}
           />
         </View>
 
@@ -50,6 +87,8 @@ export default function AddPetScreen() {
               style={styles.input}
               placeholder="Specify breed"
               placeholderTextColor="#A0A0A0"
+              value={breed}
+              onChangeText={setBreed}
             />
           </View>
           <View style={[styles.inputGroup, { flex: 1 }]}>
@@ -58,6 +97,8 @@ export default function AddPetScreen() {
               style={styles.input}
               placeholder="Dog"
               placeholderTextColor="#A0A0A0"
+              value={type}
+              onChangeText={setType}
             />
           </View>
         </View>
@@ -94,6 +135,8 @@ export default function AddPetScreen() {
               placeholder="Input age"
               placeholderTextColor="#A0A0A0"
               keyboardType="numeric"
+              value={age}
+              onChangeText={setAge}
             />
           </View>
         </View>
@@ -107,6 +150,8 @@ export default function AddPetScreen() {
             placeholderTextColor="#A0A0A0"
             multiline={true}
             numberOfLines={4}
+            value={about}
+            onChangeText={setAbout}
           />
         </View>
 
@@ -117,6 +162,8 @@ export default function AddPetScreen() {
             style={styles.input}
             placeholder="Enter address"
             placeholderTextColor="#A0A0A0"
+            value={address}
+            onChangeText={setAddress}
           />
         </View>
 

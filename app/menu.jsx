@@ -40,7 +40,7 @@ const menu = () => {
       router.push("/dashboard");
     }
     if (menuItem.name === "Log-out") {
-      router.push("/login");
+      router.push("/auth/login");
     }
 
     // TESTSTS PLEASE REMOVE LATER
@@ -69,7 +69,7 @@ const menu = () => {
             <View style={styles.profiletext}>
               <Text style={[styles.bold, { fontSize: 20 }]}>{name}</Text>
               <Text>{status}</Text>
-              <TouchableOpacity onPress={() => router.push("/login")}>
+              <TouchableOpacity onPress={() => router.push("/auth/login")}>
                 <Text style={{ margin: 5 }}>Log in</Text>
               </TouchableOpacity>
             </View>
