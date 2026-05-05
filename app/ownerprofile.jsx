@@ -14,8 +14,9 @@ export default function OwnerProfileScreen() {
   // Static data based on your image
   const owner = {
     name: "Gabriel Cabije",
-    location: "Buagsong, Cordova, Cebu City, Philippines",
     contact: "0991 570 6585",
+    gender: "Male",
+    location: "Buagsong, Cordova, Cebu City, Philippines",
     email: "gabb@gmail.com",
     // Replace with your actual local asset path
     avatar: profile,
