@@ -1,26 +1,26 @@
 import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
 import React from "react";
-import styles from "../styles/globalStyle";
-import Bottom_menu from "../components/bottom_menu.jsx";
+import styles from "../../styles/globalStyle";
+import Bottom_menu from "../../components/bottom_menu.jsx";
 
 const coreValues = [
   {
     id: "1",
-    icon: require("../assets/menu/about/find_a_friend.png"),
+    icon: require("../../assets/menu/about/find_a_friend.png"),
     title: "Find a Friend",
     description:
       "We partner with verified shelters to make adoption safe and simple.",
   },
   {
     id: "2",
-    icon: require("../assets/menu/about/shop_with_purpose.png"),
+    icon: require("../../assets/menu/about/shop_with_purpose.png"),
     title: "Shop with Purpose",
     description:
       "Every purchase from our shop helps fund shelter operations and pet food.",
   },
   {
     id: "3",
-    icon: require("../assets/menu/about/vetted_quality.png"),
+    icon: require("../../assets/menu/about/vetted_quality.png"),
     title: "Vetted Quality",
     description:
       "From chew toys to nutrition, we only stock products we trust for our own pets.",
@@ -30,13 +30,13 @@ const coreValues = [
 const devs = [
   {
     id: "1",
-    pfp: require("../assets/menu/about/dev1.png"),
+    pfp: require("../../assets/menu/about/dev1.png"),
     name: "Gabriel Matthew L. Cabije",
     role: "Full Stack Developer",
   },
   {
     id: "2",
-    pfp: require("../assets/menu/about/dev2.png"),
+    pfp: require("../../assets/menu/about/dev2.png"),
     name: "Roselle F. Durano",
     role: "Full Stack Developer",
   },
@@ -52,7 +52,7 @@ const About = () => {
         {/* HEADER */}
         <View>
           <Text style={styles.label}>About us</Text>
-          <Image source={require("../assets/menu/about/about_header.png")} />
+          <Image source={require("../../assets/menu/about/about_header.png")} />
           <Text style={styles.aboutText}>
             At Furhaven, we believe every pet deserves a soft place to land and
             every pet parent deserves the best tools to care for them.

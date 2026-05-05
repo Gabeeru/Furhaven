@@ -1,18 +1,23 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
 import React from "react";
-import catbg from "../assets/menu/cat_bg.png";
-import profile from "../assets/menu/default_profile.png";
-import styles from "../styles/globalStyle";
+import catbg from "../../assets/menu/cat_bg.png";
+import profile from "../../assets/menu/default_profile.png";
+import styles from "../../styles/globalStyle";
 import { Ionicons } from "@expo/vector-icons";
-import { ImageBackground } from "react-native";
 import { useRouter } from "expo-router";
+import { signOut } from "firebase/auth";
+import { auth } from "../../lib/firebase";
 
 const COLORS = {
   background: "#FBF0DD",
   primary: "#61372F",
 };
-
-<ImageBackground source={catbg} style={styles.catbg}></ImageBackground>;
 
 const menubuttons = [
   { id: "1", name: "Profile", icon: "person" },
@@ -30,30 +35,40 @@ const status = "Active Status";
 const menu = () => {
   const router = useRouter();
 
-  const handleMenuPress = (menuItem) => {
+  const handleMenuPress = async (menuItem) => {
     console.log(`Navigating to ${menuItem.name}`);
+
     if (menuItem.name === "About") {
-      // navigation logic to about page
-      router.push("/about");
-    }
-    if (menuItem.name === "Home") {
-      router.push("/dashboard");
-    }
-    if (menuItem.name === "Log-out") {
-      router.push("/auth/login");
+      router.push("/protected/about");
+      return;
     }
 
-    // TESTSTS PLEASE REMOVE LATER
-    // if (menuItem.name === "Profile") {
-    //   router.push("/addprofile");
-    // }
-    if (menuItem.name === "Profile") {
-      router.push("/petprofile");
+    if (menuItem.name === "Home") {
+      router.push("/protected/dashboard");
+      return;
     }
+
+    if (menuItem.name === "Profile") {
+      router.push("/protected/petprofile");
+      return;
+    }
+
     if (menuItem.name === "Settings") {
-      router.push("/ownerprofile");
+      router.push("/protected/ownerprofile");
+      return;
+    }
+
+    if (menuItem.name === "Log-out") {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("Logout error:", error);
+      } finally {
+        router.replace("/auth/login");
+      }
     }
   };
+
   return (
     <View>
       <ImageBackground
@@ -63,18 +78,17 @@ const menu = () => {
         resizeMode="cover"
       >
         <View style={styles.menucontainer}>
-          {/* profile */}
           <View style={styles.profilecontainer}>
-            <Image source={profile} style={styles.imageprofile}></Image>
+            <Image source={profile} style={styles.imageprofile} />
             <View style={styles.profiletext}>
               <Text style={[styles.bold, { fontSize: 20 }]}>{name}</Text>
               <Text>{status}</Text>
-              <TouchableOpacity onPress={() => router.push("/auth/login")}>
+              <TouchableOpacity onPress={() => router.replace("/auth/login")}>
                 <Text style={{ margin: 5 }}>Log in</Text>
               </TouchableOpacity>
             </View>
           </View>
-          {/* end of profile */}
+
           <View style={styles.menuButtonContainer}>
             {menubuttons.map((item) => (
               <TouchableOpacity
@@ -92,4 +106,5 @@ const menu = () => {
     </View>
   );
 };
+
 export default menu;

@@ -9,9 +9,9 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "../styles/globalStyle";
-import Bottom_menu from "../components/bottom_menu.jsx";
-import PetCard from "../components/PetCard.jsx";
+import styles from "../../styles/globalStyle";
+import Bottom_menu from "../../components/bottom_menu.jsx";
+import PetCard from "../../components/PetCard.jsx";
 
 const Dashboard = () => {
   const [text, setText] = useState("");
@@ -23,19 +23,19 @@ const Dashboard = () => {
       id: "1",
       title: "Dog",
       color: "#FFFFFF",
-      icon: require("../assets/dashboard/dog.png"),
+      icon: require("../../assets/dashboard/dog.png"),
     },
     {
       id: "2",
       title: "Cat",
       color: "#FFFFFF",
-      icon: require("../assets/dashboard/cat.png"),
+      icon: require("../../assets/dashboard/cat.png"),
     },
     {
       id: "3",
       title: "Others",
       color: "#FFFFFF",
-      icon: require("../assets/dashboard/others.png"),
+      icon: require("../../assets/dashboard/others.png"),
     },
   ];
 

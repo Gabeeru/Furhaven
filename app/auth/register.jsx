@@ -1,13 +1,10 @@
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import styles from "../../styles/globalStyle";
-import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
-import { Link } from "expo-router";
-import { auth, db } from "../../lib/firebase";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Link, useRouter } from "expo-router";
+import { auth } from "../../lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
-import { useRouter } from "expo-router";
-import { doc, setDoc } from "firebase/firestore";
 
 const COLORS = {
   background: "#FBF0DD",
@@ -18,49 +15,61 @@ const COLORS = {
 };
 
 const register = () => {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confpassword, setConfPassword] = useState("");
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-  const passwordsMatch = (password) => {
+  const validateInputs = () => {
+    if (!email || !password || !confpassword) {
+      setError("Please fill in all fields.");
+      return false;
+    }
     if (password !== confpassword) {
-      alert("Passwords do not match. Please try again.");
+      setError("Passwords do not match.");
+      return false;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
       return false;
     }
     return true;
   };
 
   const handleRegister = async () => {
-    if (!passwordsMatch(password)) {
-      return;
-    }
-    if (!username || !email || !password || !confpassword) {
-      alert("Please fill in all fields.");
-      return;
-    }
+    setError("");
+
+    if (!validateInputs()) return;
+
     try {
       setLoading(true);
+
+      // Step 1: Create user with Firebase Auth
       const userCred = await createUserWithEmailAndPassword(
         auth,
         email,
         password,
       );
-      const user = userCred.user;
-      // Create a document in the users collection
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        username: username,
-        createdAt: new Date(),
-      });
-      alert("User created successfully!");
-      router.push("/welcome");
+
+      console.log("Auth user created:", userCred.user.uid);
+
+      // Navigate to complete-profile screen with UID
+      // The uid is automatically available via auth.currentUser
+      router.push("/auth/complete-profile");
     } catch (error) {
-      console.log("Error creating user:", error);
-      alert("Failed to create user: " + error.message);
+      console.error("Registration error:", error.code);
+
+      if (error.code === "auth/email-already-in-use") {
+        setError("Email already in use.");
+      } else if (error.code === "auth/invalid-email") {
+        setError("Invalid email address.");
+      } else if (error.code === "auth/weak-password") {
+        setError("Password is too weak.");
+      } else {
+        setError(error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -75,16 +84,11 @@ const register = () => {
 
       <Text style={styles.loginText}>SIGN UP</Text>
 
+      {error ? (
+        <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+      ) : null}
+
       <View style={styles.formContainer}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Username</Text>
-          <TextInput
-            style={styles.textInputs}
-            placeholder="Enter your username"
-            value={username}
-            onChangeText={setUsername}
-          />
-        </View>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Email</Text>
           <TextInput
@@ -92,6 +96,8 @@ const register = () => {
             placeholder="Enter your email"
             value={email}
             onChangeText={setEmail}
+            editable={!loading}
+            keyboardType="email-address"
           />
         </View>
 
@@ -103,8 +109,10 @@ const register = () => {
             placeholder="Enter your password"
             value={password}
             onChangeText={setPassword}
+            editable={!loading}
           />
         </View>
+
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Confirm Password</Text>
           <TextInput
@@ -113,9 +121,11 @@ const register = () => {
             placeholder="Confirm your password"
             value={confpassword}
             onChangeText={setConfPassword}
+            editable={!loading}
           />
         </View>
       </View>
+
       <Link href="/auth/login" style={styles.link}>
         Already have an account? Log In
       </Link>
@@ -130,7 +140,7 @@ const register = () => {
         disabled={loading}
       >
         <Text style={styles.getStartedText}>
-          {loading ? "Signing up..." : "Sign Up"}
+          {loading ? "Creating account..." : "Sign Up"}
         </Text>
         <FontAwesome5
           name="paw"

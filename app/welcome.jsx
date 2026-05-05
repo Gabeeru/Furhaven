@@ -28,7 +28,7 @@ const welcome = () => {
       {/* Button */}
       <TouchableOpacity
         style={styles.getStartedBtn}
-        onPress={() => router.push("/dashboard")}
+        onPress={() => router.push("/protected/dashboard")}
       >
         <Text style={styles.getStartedText}>
           Get Started <Image style={styles.paw} source={paw} />

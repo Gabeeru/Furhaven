@@ -7,8 +7,8 @@ import {
   StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import MyPetCard from "../components/MyPetCard";
-import Bottom_menu from "../components/bottom_menu.jsx";
+import MyPetCard from "../../components/MyPetCard";
+import Bottom_menu from "../../components/bottom_menu.jsx";
 import { useRouter } from "expo-router";
 
 const petData = [
