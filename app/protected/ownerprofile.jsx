@@ -8,7 +8,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import profile from "../assets/menu/default_profile.png";
+import profile from "../../assets/menu/default_profile.png";
 
 export default function OwnerProfileScreen() {
   // Static data based on your image

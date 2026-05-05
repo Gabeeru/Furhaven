@@ -20,7 +20,7 @@ export default function PetProfileScreen({ route }) {
     location: "Calawisan, Lapu-lapu City, Cebu, Philippines",
     about:
       "Brodie is a gentle and affectionate Siamese cat with striking blue eyes and a calm personality. At 9 months old, he is still playful and curious, enjoying simple activities like chasing toys and exploring cozy corners. Despite his young age, Brodie already shows a sweet and friendly nature, making him easy to bond with.\n\nHe is well-behaved, enjoys human companionship, and gets comfortable quickly in a loving environment. Brodie would be a great companion for individuals or families looking for a calm yet playful pet to brighten their home.",
-    image: require("../assets/dashboard/pet1.png"),
+    image: require("../../assets/dashboard/pet1.png"),
   };
 
   return (
