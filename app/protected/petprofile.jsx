@@ -8,17 +8,21 @@ import {
   StyleSheet,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { db, auth } from "../../lib/firebase";
 
 export default function PetProfileScreen() {
   const { petId } = useLocalSearchParams();
+  const router = useRouter();
 
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
+
   const defaultImages = {
     dog: require("../../assets/petdefault/dog.png"),
     cat: require("../../assets/petdefault/cat.png"),
@@ -32,7 +36,14 @@ export default function PetProfileScreen() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setPet({ id: docSnap.id, ...docSnap.data() });
+          const petData = { id: docSnap.id, ...docSnap.data() };
+          setPet(petData);
+          
+          // Check if current user is the owner
+          const currentUser = auth.currentUser;
+          if (currentUser && petData.ownerId === currentUser.uid) {
+            setIsOwner(true);
+          }
         } else {
           setPet(null);
         }
@@ -45,6 +56,26 @@ export default function PetProfileScreen() {
 
     if (petId) fetchPet();
   }, [petId]);
+
+  const handleAdoptPress = () => {
+    if (!auth.currentUser) {
+      Alert.alert("Login Required", "Please login to submit an adoption request.", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Login", onPress: () => router.push("/auth/login") }
+      ]);
+      return;
+    }
+
+    // Navigate to adoption request form
+    router.push(`/protected/adoptionrequest?petId=${pet.id}`);
+  };
+
+  const handleViewRequests = () => {
+    router.push({
+      pathname: "/protected/adoptionlist",
+      params: { petId: pet.id, petName: pet.name }
+    });
+  };
 
   if (loading) {
     return (
@@ -62,10 +93,13 @@ export default function PetProfileScreen() {
     );
   }
 
+  const isAvailable = pet.status?.toLowerCase() === "available";
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.pageTitle}>Pet Profile</Text>
+        {/* Header - Title only in upper left */}
+        <Text style={styles.headerTitle}>Pet Profile</Text>
 
         {/* Hero Section */}
         <View style={styles.heroSection}>
@@ -108,13 +142,34 @@ export default function PetProfileScreen() {
           </Text>
         </View>
 
-        {/* Adopt */}
-        <TouchableOpacity style={styles.adoptButton}>
-          <Text style={styles.adoptButtonText}>
-            {pet.status === "Available" ? "ADOPT" : "UNAVAILABLE"}
+        {/* Action Button - Changes based on user role */}
+        {isOwner ? (
+          <TouchableOpacity 
+            style={styles.viewRequestsButton}
+            onPress={handleViewRequests}
+          >
+            <Ionicons name="document-text" size={20} color="#FFF" />
+            <Text style={styles.viewRequestsButtonText}>View Adoption Requests</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity 
+            style={[styles.adoptButton, !isAvailable && styles.disabledButton]}
+            onPress={handleAdoptPress}
+            disabled={!isAvailable}
+          >
+            <Text style={styles.adoptButtonText}>
+              {isAvailable ? "ADOPT" : "UNAVAILABLE"}
+            </Text>
+            <Ionicons name="paw" size={20} color="#5C4033" />
+          </TouchableOpacity>
+        )}
+
+        {/* Show message if pet is adopted */}
+        {!isAvailable && !isOwner && (
+          <Text style={styles.adoptedMessage}>
+            This pet has already been adopted. Check out other pets!
           </Text>
-          <Ionicons name="paw" size={20} color="#5C4033" />
-        </TouchableOpacity>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -136,11 +191,13 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     alignItems: "center",
   },
-  pageTitle: {
-    fontSize: 20,
+  headerTitle: {
+    fontSize: 24,
     fontWeight: "bold",
+    color: "#332115",
     alignSelf: "flex-start",
     marginBottom: 20,
+    marginTop: 10,
   },
   heroSection: {
     width: "100%",
@@ -228,5 +285,30 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#5C4033",
+  },
+  disabledButton: {
+    opacity: 0.5,
+    backgroundColor: "#9E9E9E",
+  },
+  viewRequestsButton: {
+    backgroundColor: "#B07D5E",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "80%",
+    paddingVertical: 12,
+    borderRadius: 10,
+    gap: 8,
+  },
+  viewRequestsButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#FFF",
+  },
+  adoptedMessage: {
+    marginTop: 16,
+    fontSize: 12,
+    color: "#DC2626",
+    textAlign: "center",
   },
 });
