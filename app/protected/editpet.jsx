@@ -19,7 +19,9 @@ export default function EditPet() {
   const { petId } = useLocalSearchParams();
   const router = useRouter();
 
+  // STATES
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
 
   const [gender, setGender] = useState("Female");
   const [petName, setPetName] = useState("");
@@ -29,7 +31,7 @@ export default function EditPet() {
   const [about, setAbout] = useState("");
   const [address, setAddress] = useState("");
 
-  // FETCH EXISTING DATA
+  // FETCH PET DATA
   useEffect(() => {
     const fetchPet = async () => {
       try {
@@ -51,6 +53,7 @@ export default function EditPet() {
         }
       } catch (error) {
         console.error("Fetch error:", error);
+        Alert.alert("Error", "Failed to load pet.");
       } finally {
         setLoading(false);
       }
@@ -59,7 +62,7 @@ export default function EditPet() {
     if (petId) fetchPet();
   }, [petId]);
 
-  //  UPDATE LOGIC
+  // UPDATE PET
   const handleUpdate = async () => {
     if (!petName.trim()) {
       Alert.alert("Validation", "Please enter the pet name.");
@@ -67,6 +70,8 @@ export default function EditPet() {
     }
 
     try {
+      setUpdating(true);
+
       const docRef = doc(db, "pets", petId);
 
       await updateDoc(docRef, {
@@ -84,9 +89,12 @@ export default function EditPet() {
     } catch (error) {
       console.error("Update error:", error);
       Alert.alert("Error", "Failed to update pet.");
+    } finally {
+      setUpdating(false);
     }
   };
 
+  // LOADING SCREEN
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -98,7 +106,7 @@ export default function EditPet() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
+        {/* HEADER */}
         <View style={styles.topActionRow}>
           <View>
             <Text style={styles.pageTitle}>Edit Pet</Text>
@@ -106,29 +114,29 @@ export default function EditPet() {
           </View>
 
           <TouchableOpacity
-            style={styles.saveBtn}
+            style={[styles.saveBtn, updating && { opacity: 0.6 }]}
             onPress={handleUpdate}
-            disabled={loading}
+            disabled={updating}
           >
             <Ionicons name="save-outline" size={18} color="black" />
             <Text style={styles.saveText}>
-              {loading ? "UPDATING..." : "UPDATE"}
+              {updating ? "UPDATING..." : "UPDATE"}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Name */}
+        {/* NAME */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
             value={petName}
             onChangeText={setPetName}
-            editable={!loading}
+            editable={!updating}
           />
         </View>
 
-        {/* Breed + Type */}
+        {/* BREED + TYPE */}
         <View style={styles.row}>
           <View style={[styles.inputGroup, { flex: 1.5, marginRight: 10 }]}>
             <Text style={styles.label}>Breed</Text>
@@ -136,7 +144,7 @@ export default function EditPet() {
               style={styles.input}
               value={breed}
               onChangeText={setBreed}
-              editable={!loading}
+              editable={!updating}
             />
           </View>
 
@@ -146,7 +154,7 @@ export default function EditPet() {
               <Picker
                 selectedValue={type}
                 onValueChange={(val) => setType(val)}
-                editable={!loading}
+                enabled={!updating}
               >
                 <Picker.Item label="Select Type" value="" />
                 <Picker.Item label="Dog" value="Dog" />
@@ -157,7 +165,7 @@ export default function EditPet() {
           </View>
         </View>
 
-        {/* Gender + Age */}
+        {/* GENDER + AGE */}
         <View style={styles.row}>
           <View style={[styles.inputGroup, { flex: 1.2, marginRight: 10 }]}>
             <Text style={styles.label}>Gender</Text>
@@ -168,6 +176,7 @@ export default function EditPet() {
                   styles.genderOption,
                   gender === "Female" && styles.genderActive,
                 ]}
+                disabled={updating}
               >
                 <Text>Female</Text>
               </TouchableOpacity>
@@ -178,6 +187,7 @@ export default function EditPet() {
                   styles.genderOption,
                   gender === "Male" && styles.genderActive,
                 ]}
+                disabled={updating}
               >
                 <Text>Male</Text>
               </TouchableOpacity>
@@ -191,12 +201,12 @@ export default function EditPet() {
               value={age}
               onChangeText={setAge}
               keyboardType="numeric"
-              editable={!loading}
+              editable={!updating}
             />
           </View>
         </View>
 
-        {/* About */}
+        {/* ABOUT */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>About</Text>
           <TextInput
@@ -204,18 +214,18 @@ export default function EditPet() {
             value={about}
             onChangeText={setAbout}
             multiline
-            editable={!loading}
+            editable={!updating}
           />
         </View>
 
-        {/* Address */}
+        {/* ADDRESS */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Address</Text>
           <TextInput
             style={styles.input}
             value={address}
             onChangeText={setAddress}
-            editable={!loading}
+            editable={!updating}
           />
         </View>
       </ScrollView>
@@ -223,6 +233,7 @@ export default function EditPet() {
   );
 }
 
+/* STYLES */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
