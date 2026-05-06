@@ -14,7 +14,6 @@ import { db } from "../../lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "expo-router";
 import { auth } from "../../lib/firebase";
-import { Picker } from "@react-native-picker/picker";
 
 export default function AddPetScreen() {
   const [gender, setGender] = useState("Female");
@@ -29,6 +28,10 @@ export default function AddPetScreen() {
   const addPet = async () => {
     if (!petName.trim()) {
       Alert.alert("Validation", "Please enter the pet name.");
+      return;
+    }
+    if (!type.trim()) {
+      Alert.alert("Validation", "Please select the pet type.");
       return;
     }
     const user = auth.currentUser;
@@ -91,33 +94,49 @@ export default function AddPetScreen() {
           />
         </View>
 
-        {/* Breed and Type Row */}
-        <View style={styles.row}>
-          <View style={[styles.inputGroup, { flex: 1.5, marginRight: 10 }]}>
-            <Text style={styles.label}>Breed</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Specify breed"
-              placeholderTextColor="#A0A0A0"
-              value={breed}
-              onChangeText={setBreed}
-            />
-          </View>
-          <View style={[styles.inputGroup, { flex: 1 }]}>
-            <Text style={styles.label}>Type</Text>
+        {/* Breed Input */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Breed</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Specify breed"
+            placeholderTextColor="#A0A0A0"
+            value={breed}
+            onChangeText={setBreed}
+          />
+        </View>
 
-            <View style={styles.input}>
-              <Picker
-                selectedValue={type}
-                onValueChange={(itemValue) => setType(itemValue)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Select Type" value="" />
-                <Picker.Item label="Dog" value="Dog" />
-                <Picker.Item label="Cat" value="Cat" />
-                <Picker.Item label="Bird" value="Bird" />
-              </Picker>
-            </View>
+        {/* Type Selection */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Type *</Text>
+          <View style={styles.typeToggleContainer}>
+            <TouchableOpacity
+              onPress={() => setType("Dog")}
+              style={[
+                styles.typeOption,
+                type === "Dog" && styles.typeActive,
+              ]}
+            >
+              <Text style={styles.typeText}>🐶 Dog</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setType("Cat")}
+              style={[
+                styles.typeOption,
+                type === "Cat" && styles.typeActive,
+              ]}
+            >
+              <Text style={styles.typeText}>🐱 Cat</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setType("Bird")}
+              style={[
+                styles.typeOption,
+                type === "Bird" && styles.typeActive,
+              ]}
+            >
+              <Text style={styles.typeText}>🐦 Bird</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -282,6 +301,29 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
   },
+  // Type Toggle Styles
+  typeToggleContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 8,
+    height: 40,
+    overflow: "hidden",
+  },
+  typeOption: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  typeActive: {
+    backgroundColor: "#D9C4A9",
+  },
+  typeText: {
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  // Gender Toggle Styles
   genderToggleContainer: {
     flexDirection: "row",
     backgroundColor: "white",
@@ -333,20 +375,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
     lineHeight: 16,
     paddingHorizontal: 20,
-  },
-  dropdown: {
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 8,
-    height: 40,
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-
-  dropdownPicker: {
-    height: 40,
-    color: "#000",
-    width: "100%",
   },
 });

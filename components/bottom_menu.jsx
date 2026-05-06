@@ -6,10 +6,10 @@ import { useRouter } from "expo-router";
 
 const menu = [
   { id: "1", name: "Home", icon: "home" },
-  { id: "2", name: "My Pets", icon: "paw" },
-  { id: "3", name: "Add-Pet", icon: "add-circle" },
+  { id: "2", name: "Request List", icon: "document-text" },
+  { id: "3", name: "My Pets", icon: "paw" },
   { id: "4", name: "Profile", icon: "person" },
-  { id: "5", name: "Settings", icon: "settings" },
+  { id: "5", name: "Notifications", icon: "notifications" },
 ];
 
 const bottom_menu = () => {
@@ -17,12 +17,22 @@ const bottom_menu = () => {
 
   const handleMenuPress = (menuItem) => {
     console.log("Navigating to:", menuItem);
-    // navigation logic
+    
+    // Navigation logic
     if (menuItem === "Home") {
       router.push("/protected/dashboard");
     }
-    if (menuItem === "Add-Pet") {
+    if (menuItem === "Request List") {
+      router.push("/protected/adoptionlist");
+    }
+    if (menuItem === "My Pets") {
       router.push("/protected/mypet");
+    }
+    if (menuItem === "Profile") {
+      router.push("/protected/profile");
+    }
+    if (menuItem === "Notifications") {
+      router.push("/protected/notification");
     }
   };
 
