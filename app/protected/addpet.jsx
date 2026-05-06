@@ -12,6 +12,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { db } from "../../lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useRouter } from "expo-router";
+import { auth } from "../../lib/firebase";
+import { Picker } from "@react-native-picker/picker";
 
 export default function AddPetScreen() {
   const [gender, setGender] = useState("Female");
@@ -21,30 +24,39 @@ export default function AddPetScreen() {
   const [age, setAge] = useState("");
   const [about, setAbout] = useState("");
   const [address, setAddress] = useState("");
+  const router = useRouter();
 
   const addPet = async () => {
+    if (!petName.trim()) {
+      Alert.alert("Validation", "Please enter the pet name.");
+      return;
+    }
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert("Not signed in", "Please log in first.");
+      return;
+    }
+
     try {
-      await addDoc(collection(db, "pets"), {
+      const docRef = await addDoc(collection(db, "pets"), {
+        ownerId: user.uid,
+        ownerEmail: user.email || null,
         name: petName,
-        breed: breed,
-        type: type,
-        gender: gender,
-        age: age,
-        about: about,
-        address: address,
+        breed,
+        type,
+        gender,
+        age,
+        about,
+        address,
         status: "Available",
         createdAt: serverTimestamp(),
         adoptedBy: null,
       });
       Alert.alert("Success", "Pet added successfully!");
-      setPetName("");
-      setBreed("");
-      setType("");
-      setAge("");
-      setAbout("");
-      setAddress("");
+      router.replace("/protected/mypet");
     } catch (error) {
-      console.error("Error adding pet: ", error);
+      console.error("Error adding pet:", error);
+      Alert.alert("Error", error.message || "Failed to add pet.");
     }
   };
 
@@ -93,13 +105,19 @@ export default function AddPetScreen() {
           </View>
           <View style={[styles.inputGroup, { flex: 1 }]}>
             <Text style={styles.label}>Type</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Dog"
-              placeholderTextColor="#A0A0A0"
-              value={type}
-              onChangeText={setType}
-            />
+
+            <View style={styles.input}>
+              <Picker
+                selectedValue={type}
+                onValueChange={(itemValue) => setType(itemValue)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Select Type" value="" />
+                <Picker.Item label="Dog" value="Dog" />
+                <Picker.Item label="Cat" value="Cat" />
+                <Picker.Item label="Bird" value="Bird" />
+              </Picker>
+            </View>
           </View>
         </View>
 
@@ -132,7 +150,7 @@ export default function AddPetScreen() {
             <Text style={styles.label}>Age</Text>
             <TextInput
               style={styles.input}
-              placeholder="Input age"
+              placeholder="Years"
               placeholderTextColor="#A0A0A0"
               keyboardType="numeric"
               value={age}
@@ -315,5 +333,20 @@ const styles = StyleSheet.create({
     marginTop: 20,
     lineHeight: 16,
     paddingHorizontal: 20,
+  },
+  dropdown: {
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 8,
+    height: 40,
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+
+  dropdownPicker: {
+    height: 40,
+    color: "#000",
+    width: "100%",
   },
 });

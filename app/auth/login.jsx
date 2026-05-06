@@ -1,4 +1,11 @@
-import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import styles from "../../styles/globalStyle";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -52,7 +59,7 @@ const login = () => {
 
       router.replace("/protected/dashboard");
     } catch (error) {
-      // console.error("Login error:", error.code);
+      // Alert.alert("Login error:", error.code);
 
       if (error.code === "auth/invalid-email") {
         setError("Invalid email address.");

@@ -59,6 +59,10 @@ export default function ProtectedLayout() {
           name="addpet"
           options={{ title: "Furhaven", animation: "none" }}
         />
+        <Stack.Screen
+          name="editpet"
+          options={{ title: "Furhaven", animation: "none" }}
+        />
       </Stack>
     </AuthGuard>
   );

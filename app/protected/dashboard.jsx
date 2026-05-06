@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   View,
   ScrollView,
   TextInput,
@@ -12,124 +11,81 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "../../styles/globalStyle";
 import Bottom_menu from "../../components/bottom_menu.jsx";
 import PetCard from "../../components/PetCard.jsx";
+import { db } from "../../lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { auth } from "../../lib/firebase";
+import { useRouter } from "expo-router";
 
 const Dashboard = () => {
   const [text, setText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [pets, setPets] = useState([]);
   const [filteredPets, setFilteredPets] = useState([]);
+  const router = useRouter();
 
   const data = [
-    {
-      id: "1",
-      title: "Dog",
-      color: "#FFFFFF",
-      icon: require("../../assets/dashboard/dog.png"),
-    },
-    {
-      id: "2",
-      title: "Cat",
-      color: "#FFFFFF",
-      icon: require("../../assets/dashboard/cat.png"),
-    },
+    { id: "1", title: "Dog", icon: require("../../assets/dashboard/dog.png") },
+    { id: "2", title: "Cat", icon: require("../../assets/dashboard/cat.png") },
     {
       id: "3",
-      title: "Others",
-      color: "#FFFFFF",
-      icon: require("../../assets/dashboard/others.png"),
+      title: "Bird",
+      icon: require("../../assets/dashboard/bird.png"),
     },
   ];
 
-  const petData = [
-    {
-      id: "1",
-      name: "Gabby",
-      gender: "male",
-      type: "Cat",
-      breed: "Persian Cat",
-      age: "2",
-      location: "Bonifacio St., Cebu City, Philippines",
-    },
-    {
-      id: "2",
-      name: "Dwarde",
-      gender: "male",
-      type: "Dog",
-      breed: "Husky Dog",
-      age: "1",
-      location: "Basak, Pardo, Cebu, Philippines",
-    },
-    {
-      id: "3",
-      name: "Kentoy",
-      gender: "male",
-      type: "Bird",
-      breed: "Blue-and-yellow Macaw Parrot",
-      age: "3",
-      location: "Day-as, Cebu City, Philippines",
-    },
-    {
-      id: "4",
-      name: "Yotnek",
-      gender: "male",
-      type: "Bird",
-      breed: "Blue-and-yellow Macaw Parrot",
-      age: "3",
-      location: "Day-as, Cebu City, Philippines",
-    },
-    {
-      id: "5",
-      name: "KentDward",
-      gender: "male",
-      type: "Bird",
-      breed: "Blue-and-yellow Macaw Parrot",
-      age: "3",
-      location: "Day-as, Cebu City, Philippines",
-    },
-    {
-      id: "6",
-      name: "Selle Buno",
-      gender: "female",
-      type: "Bird",
-      breed: "Blue-and-yellow Macaw Parrot",
-      age: "3",
-      location: "Day-as, Cebu City, Philippines",
-    },
-  ];
-
-  //  Combined search + filter logic
+  // Fetch pets ONCE (only available pets)
   useEffect(() => {
-    let filtered = petData;
+    const fetchPets = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
 
-    const query = text.trim().toLowerCase();
+      try {
+        const snapshot = await getDocs(collection(db, "pets"));
 
-    // Apply search
-    if (query.length > 0) {
+        const list = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter((pet) => pet.status === "Available"); // 👈 FILTER HERE
+
+        setPets(list);
+        setFilteredPets(list);
+      } catch (error) {
+        console.error("Error fetching pets:", error);
+      }
+    };
+
+    fetchPets();
+  }, []);
+  // Filter logic
+  useEffect(() => {
+    let filtered = pets;
+
+    const searchQuery = text.trim().toLowerCase();
+
+    if (searchQuery.length > 0) {
       filtered = filtered.filter((pet) => {
         return (
-          pet.name.toLowerCase().includes(query) ||
-          pet.type.toLowerCase().includes(query) ||
-          pet.gender.toLowerCase().includes(query)
+          pet.name?.toLowerCase().includes(searchQuery) ||
+          pet.type?.toLowerCase().includes(searchQuery) ||
+          pet.gender?.toLowerCase().includes(searchQuery)
         );
       });
     }
 
-    // Apply category filter
     if (selectedCategory) {
       filtered = filtered.filter(
-        (pet) => pet.type.toLowerCase() === selectedCategory.toLowerCase(),
+        (pet) => pet.type?.toLowerCase() === selectedCategory.toLowerCase(),
       );
     }
 
     setFilteredPets(filtered);
-  }, [text, selectedCategory]);
+  }, [text, selectedCategory, pets]);
 
+  //  Category toggle
   const handleFilter = (category) => {
-    // toggle filter
-    if (selectedCategory === category) {
-      setSelectedCategory(null);
-    } else {
-      setSelectedCategory(category);
-    }
+    setSelectedCategory((prev) => (prev === category ? null : category));
   };
 
   return (
@@ -161,16 +117,12 @@ const Dashboard = () => {
                   styles.card,
                   {
                     backgroundColor:
-                      selectedCategory === item.title ? "#ddd" : item.color,
+                      selectedCategory === item.title ? "#ddd" : "#fff",
                   },
                 ]}
                 onPress={() => handleFilter(item.title)}
               >
-                <Image
-                  source={item.icon}
-                  style={styles.icon}
-                  resizeMode="contain"
-                />
+                <Image source={item.icon} style={styles.icon} />
               </TouchableOpacity>
               <Text style={styles.itemLabel}>{item.title}</Text>
             </View>
@@ -188,7 +140,10 @@ const Dashboard = () => {
               key={pet.id}
               pet={pet}
               onPress={(selectedPet) =>
-                console.log("Viewing details for:", selectedPet.name)
+                router.push({
+                  pathname: "/protected/petprofile",
+                  params: { petId: pet.id },
+                })
               }
             />
           ))

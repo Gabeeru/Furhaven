@@ -1,57 +1,104 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import MyPetCard from "../../components/MyPetCard";
 import Bottom_menu from "../../components/bottom_menu.jsx";
 import { useRouter } from "expo-router";
+import { db, auth } from "../../lib/firebase";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 
-const petData = [
-  {
-    id: "1",
-    name: "Gabby",
-    gender: "male",
-    type: "Cat",
-    breed: "Persian Cat",
-    status: "Unavailable",
-    age: "2",
-    location: "Bonifacio St., Cebu City, Philippines",
-  },
-  {
-    id: "2",
-    name: "Dwarde",
-    gender: "male",
-    type: "Dog",
-    breed: "Husky Dog",
-    status: "Available",
-    age: "1",
-    location: "Basak, Pardo, Cebu, Philippines",
-  },
-  {
-    id: "3",
-    name: "Dwarddsade",
-    gender: "male",
-    type: "Bird",
-    breed: "Bird Dog",
-    status: "Available",
-    age: "1",
-    location: "Basak, Pardo, Cebu, Philippines",
-  },
-];
-
-export default function mypet() {
+export default function MyPetScreen() {
   const router = useRouter();
-  const handleDelete = (pet) => {
-    console.log("Delete pet:", pet.name);
+  const [pets, setPets] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const getPets = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return [];
+
+      const q = query(collection(db, "pets"), where("ownerId", "==", user.uid));
+
+      const snapshot = await getDocs(q);
+
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching pets:", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchPets = async () => {
+      setLoading(true);
+      const data = await getPets();
+      setPets(data);
+      setLoading(false);
+    };
+
+    fetchPets();
+  }, []);
+  const handleAdopt = async (pet) => {
+    try {
+      const petRef = doc(db, "pets", pet.id);
+
+      await updateDoc(petRef, {
+        status: "Adopted",
+      });
+
+      Alert.alert("Updated", `${pet.name} marked as adopted`);
+
+      // Refresh list
+      const updatedPets = await getPets();
+      setPets(updatedPets);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      Alert.alert("Error", "Failed to update pet.");
+    }
+  };
+
+  const handleDelete = async (pet) => {
+    try {
+      const petRef = doc(db, "pets", pet.id);
+
+      await deleteDoc(petRef);
+
+      Alert.alert("Deleted", `${pet.name} removed`);
+
+      // Refresh list
+      const updatedPets = await getPets();
+      setPets(updatedPets);
+    } catch (error) {
+      console.error("Error deleting pet:", error);
+      Alert.alert("Error", "Failed to delete pet.");
+    }
   };
 
   const handleEdit = (pet) => {
-    console.log("Edit pet:", pet.name);
+    router.push({
+      pathname: "/protected/editpet",
+      params: { petId: pet.id },
+    });
   };
 
   return (
@@ -60,32 +107,38 @@ export default function mypet() {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        {/* Title Section */}
+        {/* Title */}
         <View style={styles.titleSection}>
-          <View style={styles.underlineWrapper}>
-            <Text style={styles.pageTitle}>My Pets</Text>
-            <View style={styles.blueUnderline} />
-          </View>
+          <Text style={styles.pageTitle}>My Pets</Text>
           <Text style={styles.subtitle}>
             View and manage the pets you've listed for adoption.
           </Text>
         </View>
 
-        {/* Pet Cards */}
-        {petData.map((item) => (
-          <MyPetCard
-            key={item.id}
-            pet={item}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-          />
-        ))}
+        {/* Loading state */}
+        {loading && (
+          <Text style={{ textAlign: "center", marginVertical: 20 }}>
+            Loading pets...
+          </Text>
+        )}
 
-        {/* Add Pet Button */}
+        {/* Pet list */}
+        {!loading &&
+          pets.map((item) => (
+            <MyPetCard
+              key={item.id}
+              pet={item}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              onAdopt={handleAdopt}
+            />
+          ))}
+
+        {/* Add Pet */}
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.addPetBox}
-          onPress={() => router.push("/addpet")}
+          onPress={() => router.push("/protected/addpet")}
         >
           <View style={styles.plusIconContainer}>
             <Ionicons name="add" size={32} color="#5C4033" />
@@ -94,7 +147,6 @@ export default function mypet() {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Bottom Navigation */}
       <Bottom_menu />
     </View>
   );

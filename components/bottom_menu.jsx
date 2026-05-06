@@ -19,10 +19,10 @@ const bottom_menu = () => {
     console.log("Navigating to:", menuItem);
     // navigation logic
     if (menuItem === "Home") {
-      router.push("/dashboard");
+      router.push("/protected/dashboard");
     }
     if (menuItem === "Add-Pet") {
-      router.push("/mypet");
+      router.push("/protected/mypet");
     }
   };
 

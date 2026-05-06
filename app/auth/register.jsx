@@ -46,7 +46,7 @@ const register = () => {
     try {
       setLoading(true);
 
-      // Step 1: Create user with Firebase Auth
+      //Create user with Firebase Auth
       const userCred = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -56,7 +56,6 @@ const register = () => {
       console.log("Auth user created:", userCred.user.uid);
 
       // Navigate to complete-profile screen with UID
-      // The uid is automatically available via auth.currentUser
       router.push("/auth/complete-profile");
     } catch (error) {
       console.error("Registration error:", error.code);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,38 +7,83 @@ import {
   ScrollView,
   StyleSheet,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
-export default function PetProfileScreen({ route }) {
-  // Assuming you pass the pet data via navigation, or use a static one for now:
-  const pet = {
-    name: "Brodie",
-    breed: "Siamese Cat",
-    age: "9 months old",
-    gender: "Male",
-    location: "Calawisan, Lapu-lapu City, Cebu, Philippines",
-    about:
-      "Brodie is a gentle and affectionate Siamese cat with striking blue eyes and a calm personality. At 9 months old, he is still playful and curious, enjoying simple activities like chasing toys and exploring cozy corners. Despite his young age, Brodie already shows a sweet and friendly nature, making him easy to bond with.\n\nHe is well-behaved, enjoys human companionship, and gets comfortable quickly in a loving environment. Brodie would be a great companion for individuals or families looking for a calm yet playful pet to brighten their home.",
-    image: require("../../assets/dashboard/pet1.png"),
+export default function PetProfileScreen() {
+  const { petId } = useLocalSearchParams();
+
+  const [pet, setPet] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const defaultImages = {
+    dog: require("../../assets/petdefault/dog.png"),
+    cat: require("../../assets/petdefault/cat.png"),
+    bird: require("../../assets/petdefault/bird.png"),
   };
+
+  useEffect(() => {
+    const fetchPet = async () => {
+      try {
+        const docRef = doc(db, "pets", petId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setPet({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          setPet(null);
+        }
+      } catch (error) {
+        console.error("Error fetching pet:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (petId) fetchPet();
+  }, [petId]);
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#5C4033" />
+      </View>
+    );
+  }
+
+  if (!pet) {
+    return (
+      <View style={styles.loader}>
+        <Text>Pet not found</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.pageTitle}>Pet Profile</Text>
 
-        {/* Hero Section: Circular Backdrop and Image */}
+        {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.circleBackdrop} />
+
           <Image
-            source={pet.image}
+            source={
+              pet.image
+                ? { uri: pet.image }
+                : defaultImages[pet.type?.toLowerCase()] ||
+                  require("../../assets/petdefault/cat.png")
+            }
             style={styles.petHeroImage}
             resizeMode="contain"
           />
         </View>
 
-        {/* Pet Primary Info */}
+        {/* Info */}
         <View style={styles.headerInfo}>
           <Text style={styles.petName}>{pet.name}</Text>
           <Text style={styles.petBreed}>{pet.breed}</Text>
@@ -51,25 +96,24 @@ export default function PetProfileScreen({ route }) {
 
           <View style={styles.locationRow}>
             <Ionicons name="location" size={14} color="#8B4513" />
-            <Text style={styles.locationText}>{pet.location}</Text>
+            <Text style={styles.locationText}>{pet.address}</Text>
           </View>
         </View>
 
-        {/* About Card */}
+        {/* About */}
         <View style={styles.aboutCard}>
           <Text style={styles.aboutTitle}>About {pet.name}</Text>
-          <Text style={styles.aboutDescription}>{pet.about}</Text>
+          <Text style={styles.aboutDescription}>
+            {pet.about || "No description provided."}
+          </Text>
         </View>
 
-        {/* Adopt Button */}
+        {/* Adopt */}
         <TouchableOpacity style={styles.adoptButton}>
-          <Text style={styles.adoptButtonText}>ADOPT</Text>
-          <Ionicons
-            name="paw"
-            size={20}
-            color="#5C4033"
-            style={{ marginLeft: 8 }}
-          />
+          <Text style={styles.adoptButtonText}>
+            {pet.status === "Available" ? "ADOPT" : "UNAVAILABLE"}
+          </Text>
+          <Ionicons name="paw" size={20} color="#5C4033" />
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -80,6 +124,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FDF2E3",
+  },
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   scrollContent: {
     paddingHorizontal: 25,
@@ -98,18 +147,17 @@ const styles = StyleSheet.create({
     height: 320,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
   },
   circleBackdrop: {
     position: "absolute",
-    width: 280,
-    height: 280,
+    width: 220,
+    height: 220,
     borderRadius: 140,
-    backgroundColor: "#C4A484", // Darker tan circle from image
+    backgroundColor: "#C4A484",
   },
   petHeroImage: {
     width: 300,
-    height: 350,
+    height: 280,
     zIndex: 1,
   },
   headerInfo: {
@@ -117,14 +165,12 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   petName: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: "bold",
-    color: "#000",
   },
   petBreed: {
     fontSize: 16,
     color: "#333",
-    fontWeight: "500",
   },
   metaRow: {
     flexDirection: "row",
@@ -157,12 +203,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     marginBottom: 30,
-    // Shadow
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
   },
   aboutTitle: {
     fontSize: 18,
@@ -182,6 +222,7 @@ const styles = StyleSheet.create({
     width: "70%",
     paddingVertical: 12,
     borderRadius: 10,
+    gap: 8,
   },
   adoptButtonText: {
     fontSize: 18,
