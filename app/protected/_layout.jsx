@@ -52,7 +52,7 @@ export default function ProtectedLayout() {
           options={{ title: "Furhaven", animation: "none" }}
         />
         <Stack.Screen
-          name="ownerprofile"
+          name="profile"
           options={{ title: "Furhaven", animation: "none" }}
         />
         <Stack.Screen
@@ -61,6 +61,23 @@ export default function ProtectedLayout() {
         />
         <Stack.Screen
           name="editpet"
+          options={{ title: "Furhaven", animation: "none" }}
+        />
+
+        <Stack.Screen
+          name="adoptionlist"
+          options={{ title: "Furhaven", animation: "none" }}
+        />
+        <Stack.Screen
+          name="adoptionrequest"
+          options={{ title: "Furhaven", animation: "none" }}
+        />
+        <Stack.Screen
+          name="notification"
+          options={{ title: "Furhaven", animation: "none" }}
+        />
+        <Stack.Screen
+          name="adoptedpets"
           options={{ title: "Furhaven", animation: "none" }}
         />
       </Stack>

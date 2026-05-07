@@ -108,11 +108,24 @@ export default function MyPetScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Title */}
-        <View style={styles.titleSection}>
-          <Text style={styles.pageTitle}>My Pets</Text>
-          <Text style={styles.subtitle}>
-            View and manage the pets you've listed for adoption.
-          </Text>
+        <View style={styles.titleRow}>
+          <View style={styles.titleSection}>
+            <Text style={styles.pageTitle}>My Pets</Text>
+
+            <Text style={styles.subtitle}>
+              View and manage the pets you've listed for adoption.
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.adoptedButton}
+            onPress={() => router.push("/protected/adoptedpets")}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="paw" size={18} color="#fff" />
+
+            <Text style={styles.adoptedButtonText}>Go to Adopted Pets</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Loading state */}
@@ -163,7 +176,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   titleSection: {
-    marginBottom: 35,
+    marginBottom: 15,
   },
   underlineWrapper: {
     alignSelf: "flex-start",
@@ -205,5 +218,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 5,
     fontSize: 16,
+  },
+  titleRow: {
+    marginBottom: 35,
+  },
+
+  adoptedButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#5C4033",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 14,
+    gap: 6,
+  },
+
+  adoptedButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 14,
   },
 });
