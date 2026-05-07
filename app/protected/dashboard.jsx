@@ -47,7 +47,7 @@ const Dashboard = () => {
             id: doc.id,
             ...doc.data(),
           }))
-          .filter((pet) => pet.status === "Available"); // 👈 FILTER HERE
+          .filter((pet) => pet.status === "Available");
 
         setPets(list);
         setFilteredPets(list);
